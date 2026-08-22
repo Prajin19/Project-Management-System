@@ -123,12 +123,12 @@ const syncWorkspaceUpdation = inngest.createFunction(
     }
 );
 
-const syncWorkspaceDeletion = inngest.deleteFunction(   
-{
-    id: "delete-workspace-with-clerk",
-    triggers: {     
-        event: "clerk/organization.deleted",
-    },
+const syncWorkspaceDeletion = inngest.createFunction(
+    {
+        id: "delete-workspace-with-clerk",
+        triggers: {
+            event: "clerk/organization.deleted",
+        },
 },
 async ({ event }) => {
     const { data } = event;
