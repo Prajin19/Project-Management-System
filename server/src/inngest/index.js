@@ -1,5 +1,5 @@
 import { Inngest } from "inngest";
-import { prisma } from "../../db.ts";
+import { prisma } from "../../db.js";
 
 // Create an Inngest client
 export const inngest = new Inngest({
