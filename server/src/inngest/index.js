@@ -100,7 +100,7 @@ const syncWorkspaceCreation = inngest.createFunction(
     }
 );
 
-const syncWorkspaceUpdation = inngest.updateFunction(
+const syncWorkspaceUpdation = inngest.createFunction(
     {
         id: "update-workspace-from-clerk",  
         triggers: { 
