@@ -1,11 +1,11 @@
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CalendarIcon, MessageCircle, PenIcon } from "lucide-react";
-import { assets } from "../assets/assets";
 import { useAuth, useUser } from "@clerk/clerk-react";
+import api from "../configs/api";
 
 const TaskDetails = () => {
 
@@ -24,7 +24,7 @@ const TaskDetails = () => {
 
     const { currentWorkspace } = useSelector((state) => state.workspace);
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         if(!taskId) return;
         try{
             const token= await getToken()
@@ -33,9 +33,9 @@ const TaskDetails = () => {
         }catch(error){
             toast.error(error?.response?.data?.message || error.message)
         }
-    };
+    }, [getToken, taskId]);
 
-    const fetchTaskDetails = async () => {
+    const fetchTaskDetails = useCallback(async () => {
         setLoading(true);
         if (!projectId || !taskId) return;
 
@@ -48,7 +48,7 @@ const TaskDetails = () => {
         setTask(tsk);
         setProject(proj);
         setLoading(false);
-    };
+    }, [currentWorkspace, projectId, taskId]);
 
     const handleAddComment = async () => {
         if (!newComment.trim()) return;
@@ -74,7 +74,7 @@ const TaskDetails = () => {
         }
     };
 
-    useEffect(() => { fetchTaskDetails(); }, [taskId]);
+    useEffect(() => { fetchTaskDetails(); }, [fetchTaskDetails]);
 
     useEffect(() => {
         if (taskId && task) {
@@ -82,7 +82,7 @@ const TaskDetails = () => {
             const interval = setInterval(() => { fetchComments(); }, 10000);
             return () => clearInterval(interval);
         }
-    }, [taskId, task]);
+    }, [fetchComments, task, taskId]);
 
     if (loading) return <div className="text-gray-500 dark:text-zinc-400 px-4 py-6">Loading task details...</div>;
     if (!task) return <div className="text-red-500 px-4 py-6">Task not found.</div>;

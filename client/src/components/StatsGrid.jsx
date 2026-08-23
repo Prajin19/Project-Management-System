@@ -1,5 +1,5 @@
 import { FolderOpen, CheckCircle, Users, AlertTriangle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { createElement, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function StatsGrid() {
@@ -98,7 +98,7 @@ export default function StatsGrid() {
                                     )}
                                 </div>
                                 <div className={`p-3 rounded-xl ${bgColor} bg-opacity-20`}>
-                                    <Icon size={20} className={textColor} />
+                                    {createElement(Icon, { size: 20, className: textColor })}
                                 </div>
                             </div>
                         </div>

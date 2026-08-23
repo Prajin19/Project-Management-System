@@ -5,7 +5,8 @@ import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loadTheme } from '../features/themeSlice'
 import { Loader2Icon } from 'lucide-react'
-import {useUser, SignIn, CreateOrganization} from '@clerk/clerk-react'
+import {useUser, SignIn, CreateOrganization, useAuth} from '@clerk/clerk-react'
+import { fetchWorkspaces } from '../features/workspaceSlice'
 
 const Layout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -16,13 +17,13 @@ const Layout = () => {
     // Initial load of theme
     useEffect(() => {
         dispatch(loadTheme())
-    }, [])
+    }, [dispatch])
 
     useEffect(() => {
         if(isLoaded && user && workspaces.length===0){
             dispatch(fetchWorkspaces({getToken}))
         }
-    }, [user,isLoaded])
+    }, [dispatch, getToken, isLoaded, user, workspaces.length])
 
     if(!user){
         return(

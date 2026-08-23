@@ -3,8 +3,7 @@ import { ChevronDown, Check, Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentWorkspace } from "../features/workspaceSlice";
 import { useNavigate } from "react-router-dom";
-import { dummyWorkspaces } from "../assets/assets";
-import { useOrganizationList } from "@clerk/clerk-react";
+import { useClerk, useOrganizationList } from "@clerk/clerk-react";
 
 function WorkspaceDropdown() {
 
@@ -42,7 +41,7 @@ function WorkspaceDropdown() {
         if(currentWorkspace && isLoaded){
             setActive({organization: currentWorkspace.id})
         }
-    },[currentWorkspace, isLoaded])
+    },[currentWorkspace, isLoaded, setActive])
 
     return (
         <div className="relative m-4" ref={dropdownRef}>
@@ -67,7 +66,7 @@ function WorkspaceDropdown() {
                         <p className="text-xs text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-2 px-2">
                             Workspaces
                         </p>
-                        {userMemeberships.data.map(({organization}) => (
+                        {userMemberships.data.map(({organization}) => (
                             <div key={organization.id} onClick={() => onSelectWorkspace(organization.id)} className="flex items-center gap-3 p-2 cursor-pointer rounded hover:bg-gray-100 dark:hover:bg-zinc-800" >
                                 <img src={organization.imageUrl} alt={organization.name} className="w-6 h-6 rounded" />
                                 <div className="flex-1 min-w-0">
