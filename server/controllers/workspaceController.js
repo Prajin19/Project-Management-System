@@ -1,3 +1,5 @@
+import { prisma } from "../src/db.js";
+
 export const getUserWorkspaces = async (req, res) => {
     try {
     const { userId } = await req.auth();
@@ -20,7 +22,7 @@ export const getUserWorkspaces = async (req, res) => {
         },
       },
         });
-        res.json(workspaces);
+        res.json({ workspaces });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
