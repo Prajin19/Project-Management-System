@@ -30,7 +30,7 @@ const CreateProjectDialog = ({ isDialogOpen, setIsDialogOpen }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            if(!FormData.team_lead){
+            if(!formData.team_lead){
                 return toast.error("Please select a team lead");
             }
             setIsSubmitting(true)
@@ -120,7 +120,7 @@ const CreateProjectDialog = ({ isDialogOpen, setIsDialogOpen }) => {
                         <select value={formData.team_lead} onChange={(e) => setFormData({ ...formData, team_lead: e.target.value, team_members: e.target.value ? [...new Set([...formData.team_members, e.target.value])] : formData.team_members, })} className="w-full px-3 py-2 rounded dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 mt-1 text-zinc-900 dark:text-zinc-200 text-sm" >
                             <option value="">No lead</option>
                             {currentWorkspace?.members?.map((member) => (
-                                <option key={member.user.email} value={member.user.email}>
+                                <option key={member.user.id} value={member.user.id}>
                                     {member.user.email}
                                 </option>
                             ))}
@@ -139,9 +139,9 @@ const CreateProjectDialog = ({ isDialogOpen, setIsDialogOpen }) => {
                         >
                             <option value="">Add team members</option>
                             {currentWorkspace?.members
-                                ?.filter((email) => !formData.team_members.includes(email))
+                                ?.filter((member) => !formData.team_members.includes(member.user.email))
                                 .map((member) => (
-                                    <option key={member.user.email} value={member.email}>
+                                    <option key={member.user.id} value={member.user.email}>
                                         {member.user.email}
                                     </option>
                                 ))}

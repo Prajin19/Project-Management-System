@@ -31,7 +31,11 @@ export default function ProjectSettings({ project }) {
         setIsSubmitting(true)
         toast.loading("Saving...")
         try{
-            const {data} = await api.put('/api/projects', formData, {headers: {Authorization: `Bearer ${await getToken()}`}})
+            const {data} = await api.put('/api/projects', {
+                ...formData,
+                id: project.id,
+                workspaceId: project.workspaceId,
+            }, {headers: {Authorization: `Bearer ${await getToken()}`}})
             setIsDialogOpen(false)
             dispatch(fetchWorkspaces({getToken}))
             toast.dismissAll()
@@ -99,11 +103,11 @@ export default function ProjectSettings({ project }) {
                     <div className="space-y-4 grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className={labelClasses}>Start Date</label>
-                            <input type="date" value={format(formData.start_date, "yyyy-MM-dd")} onChange={(e) => setFormData({ ...formData, start_date: new Date(e.target.value) })} className={inputClasses} />
+                            <input type="date" value={formData.start_date ? format(new Date(formData.start_date), "yyyy-MM-dd") : ""} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} className={inputClasses} />
                         </div>
                         <div className="space-y-2">
                             <label className={labelClasses}>End Date</label>
-                            <input type="date" value={format(formData.end_date, "yyyy-MM-dd")} onChange={(e) => setFormData({ ...formData, end_date: new Date(e.target.value) })} className={inputClasses} />
+                            <input type="date" value={formData.end_date ? format(new Date(formData.end_date), "yyyy-MM-dd") : ""} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} className={inputClasses} />
                         </div>
                     </div>
 

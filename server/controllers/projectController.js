@@ -1,6 +1,6 @@
 import { prisma } from "../src/db.js";
 
-export const createProject = async (rew, res) => {
+export const createProject = async (req, res) => {
   try{
     const {userId} = await req.auth();
     const {workspaceId, description, name, status, start_date, end_date, team_members, team_lead, progress, priority}=req.body;
@@ -17,14 +17,16 @@ export const createProject = async (rew, res) => {
     if(!workspace.members.some(member => member.userId === userId  && member.role === "ADMIN")){
       return res.status(403).json({message: "You are not authorized to create a project in this workspace"});
     }
-    const teamLead = await prisma.user.findUnique({
+    const teamLead = await prisma.user.findFirst({
       where: {
         id: team_lead,
-        select: {
-          id: true,
-        },
+        workspaces: { some: { workspaceId } },
       },
+      select: { id: true },
     });
+    if (!teamLead) {
+      return res.status(400).json({ message: "Please select a workspace member as team lead" });
+    }
     const project = await prisma.project.create({
       data: {
         workspaceId,
@@ -32,7 +34,7 @@ export const createProject = async (rew, res) => {
         description,
         status,
         priority,
-        team_lead: teamLead ? teamLead.id : null,
+        team_lead: teamLead.id,
         start_date: start_date? new Date(start_date) : null ,
         end_date: end_date? new Date(end_date) : null,  
       },
@@ -47,18 +49,16 @@ export const createProject = async (rew, res) => {
         await prisma.projectMember.createMany({
           data: membersToAdd.map(usmemberId => ({
             projectId: project.id,
-            userId: memberId
+            userId: usmemberId
           }))
         });
       }
     const projectWithMembers = await prisma.project.findUnique({
-      where: {
-        id: project.id,
-        include: {
+      where: { id: project.id },
+      include: {
           members: {include: {user: true}},
           tasks: {include: {assignee: true,comments: {include: {user: true}}}},
           owner: true
-        }
       }
     });
       res.json({project: projectWithMembers, message: "Project created successfully"});
@@ -68,7 +68,7 @@ export const createProject = async (rew, res) => {
   }
 }
 
-export const updateProject = async (rew, res) => {
+export const updateProject = async (req, res) => {
   try{
     const {userId} = await req.auth();
     const {id, workspaceId, description, name, status, start_date, end_date, progress, priority}=req.body;
@@ -112,7 +112,7 @@ export const updateProject = async (rew, res) => {
   }
 }
 
-export const addMember = async (rew, res) => {
+export const addMember = async (req, res) => {
   try{
     const {userId} = await req.auth();
     const {projectId} = req.params;
