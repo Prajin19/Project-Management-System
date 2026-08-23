@@ -26,6 +26,7 @@ export const createTask = async (req, res) => {
         status,
         priority,
         asigneeId,
+        type,
         due_date: new Date(due_date)
       }
     });
