@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loadTheme } from '../features/themeSlice'
 import { Loader2Icon } from 'lucide-react'
-import {useUser, SignIn, CreateOrganization, useAuth} from '@clerk/clerk-react'
+import {useUser, SignIn, CreateOrganization, useAuth, useOrganizationList} from '@clerk/clerk-react'
 import { fetchWorkspaces } from '../features/workspaceSlice'
 
 const Layout = () => {
@@ -14,16 +14,18 @@ const Layout = () => {
     const dispatch = useDispatch()
     const {user, isLoaded} = useUser()
     const {getToken} =useAuth()
+    const {userMemberships, isLoaded: isOrganizationsLoaded} = useOrganizationList({userMemberships: true})
+    const organizationCount = userMemberships.data?.length || 0
     // Initial load of theme
     useEffect(() => {
         dispatch(loadTheme())
     }, [dispatch])
 
     useEffect(() => {
-        if(isLoaded && user && workspaces.length===0){
+        if(isLoaded && isOrganizationsLoaded && user && workspaces.length===0){
             dispatch(fetchWorkspaces({getToken}))
         }
-    }, [dispatch, getToken, isLoaded, user, workspaces.length])
+    }, [dispatch, getToken, isLoaded, isOrganizationsLoaded, organizationCount, user, workspaces.length])
 
     if(!user){
         return(
@@ -41,8 +43,8 @@ const Layout = () => {
 
     if(user && workspaces.length===0){
         return(
-            <div className='min-h-screenflex items-center justify-ce'>
-                <CreateOrganization /> 
+            <div className='min-h-screen flex items-center justify-center'>
+                <CreateOrganization afterCreateOrganizationUrl="/" />
             </div>
         )
     }
