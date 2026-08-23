@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import { dummyWorkspaces } from "../assets/assets";
 import api from "../configs/api";
 
